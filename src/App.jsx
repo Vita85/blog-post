@@ -1,31 +1,17 @@
 import { useState } from "react";
 import postsData from "./postsData";
+import getDate from "./getData";
 
 function App() {
-  const [posts, setPosts] = useState();
+  //---------Дата------------
+  //винесли в окремий компонент фун-ю, яка генерує дату.
 
+  const [posts, setPosts] = useState(postsData);
+  //витягуємо інф-ю з інпутів
   const [postInfo, setPostInfo] = useState({
     title: "",
     description: "",
-    // date: getDate(),
   });
-
-  //---------Дата------------
-  // const getDate = () => {
-  //   let d = new Date();
-  //   let date = d.getDate();
-  //   let month = d.getMonth();
-  //   let year = d.getFullYear();
-  //   let zeroFormatMonth;
-
-  //   if (String(month).length === 1) {
-  //     zeroFormatMonth = "0" + (month + 1);
-  //   } else {
-  //     zeroFormatMonth = month + 1;
-  //   }
-  //   return `${date}.${zeroFormatMonth}.${year}`;
-  // };
-  // console.log(getDate());
 
   const onChangeSetPostInfo = (event) => {
     setPostInfo((prevPost) => {
@@ -37,22 +23,33 @@ function App() {
   };
 
   const addPost = () => {
-    const newPost =  {
-      id: 4,
-      title: postInfo.title,
-      description: postInfo.description,
-      // createAdd: getDate(),
+    //перевірка інпутів на вміст
+    if(postInfo.description.length === 0 || postInfo.title.length === 0) {
+      alert("Введіть текст")
+      return;
     }
-
-  }
+    //зміна стейту, щоб змінився UI
+    setPosts((prevPost) => {
+      return [
+        //спредимо старі пости
+        ...prevPost,
+        //додаємо новий пост
+        {
+          id: posts.length + 1,
+          title: postInfo.title,
+          description: postInfo.description,
+          createAdd: getDate(),
+        },
+      ];
+    });
+  };
   return (
     <div className="container">
-
       <div className="posts">
         <h1 className="header-title">IT-спеціальності</h1>
-        {postsData.map((post) => {
+        {posts.map((post) => {
           return (
-            <div key={post.id}className="post-item">
+            <div key={post.id} className="post-item">
               <h3>{post.title}</h3>
               <p>{post.description}</p>
               <span>Створено: {post.createAdd}</span>
@@ -83,9 +80,7 @@ function App() {
             name="description"
           ></textarea>
         </div>
-        <button className="add-post" >
-          Додати новий пост
-        </button>
+        <button className="add-post" onClick={addPost}>Додати новий пост</button>
       </div>
     </div>
   );

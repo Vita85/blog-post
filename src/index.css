@@ -62,7 +62,6 @@
 }
 .create-box > textarea{
   resize: none;
-  /* overflow: scroll; */
 }
 .create-box > label{
   font-size: 14px;
