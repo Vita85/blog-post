@@ -25,6 +25,7 @@
 .post-item {
   display: flex;
   flex-direction: column;
+  position: relative;
   background-color: aliceblue;
   padding: 10px;
   border-radius: 15px;
@@ -37,6 +38,22 @@
   color: gray;
   align-self: flex-end;
   font-size: 12px;
+}
+.delete-btn{
+  width: 25px;
+  height: 25px;
+  background-image: url(./img/delete.svg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  border: none;
+  background-color: aliceblue;
+  position: absolute;
+  right: 15px;
+  cursor: pointer;
+}
+.delete-btn:hover{
+  transform: scale(1.3);
+
 }
 .create-post {
   width: 30%;
@@ -60,19 +77,23 @@
   border: none;
   padding: 5px 10px;
 }
-.create-box > textarea{
+.create-box > textarea {
   resize: none;
 }
-.create-box > label{
+.create-box > label {
   font-size: 14px;
 }
-.add-post{
+.add-post {
   margin-top: 40px;
   border: none;
   background-color: rgb(2, 177, 118);
   color: white;
   border-radius: 10px;
   cursor: pointer;
- font-size: 20px;
- padding: 10px 0;
+  font-size: 20px;
+  padding: 10px 0;
+}
+.clear-post{
+  width: 200px;
+  height: 50px;
 }

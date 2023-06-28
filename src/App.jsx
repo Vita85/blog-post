@@ -5,14 +5,22 @@ import getDate from "./getData";
 function App() {
   //---------Дата------------
   //винесли в окремий компонент фун-ю, яка генерує дату.
+  //якщо не використовувати import postsData from "./postsData" - так, ніби ми ще не створювали пости,то потрібно в useState([])- передати пустий масив
+  const [posts, setPosts] = useState([]);
 
-  const [posts, setPosts] = useState(postsData);
   //витягуємо інф-ю з інпутів
   const [postInfo, setPostInfo] = useState({
     title: "",
     description: "",
   });
 
+  //видалення поста
+  const deletePost = (id) => {
+    let newPosts = posts.filter(post => post.id!==id)
+    setPosts(newPosts)
+  }
+
+//управляємо формою вводу
   const onChangeSetPostInfo = (event) => {
     setPostInfo((prevPost) => {
       return {
@@ -22,10 +30,19 @@ function App() {
     });
   };
 
+  //очищення форми
+  const onClear = () => {
+    setPostInfo({
+      title: "",
+      description: "",
+    })
+  };
+
+
   const addPost = () => {
     //перевірка інпутів на вміст
-    if(postInfo.description.length === 0 || postInfo.title.length === 0) {
-      alert("Введіть текст")
+    if (postInfo.description.length === 0 || postInfo.title.length === 0) {
+      alert("Введіть текст");
       return;
     }
     //зміна стейту, щоб змінився UI
@@ -39,10 +56,13 @@ function App() {
           title: postInfo.title,
           description: postInfo.description,
           createAdd: getDate(),
+          // index: posts.index,
         },
       ];
     });
+    onClear();
   };
+
   return (
     <div className="container">
       <div className="posts">
@@ -50,6 +70,7 @@ function App() {
         {posts.map((post) => {
           return (
             <div key={post.id} className="post-item">
+              <button className="delete-btn" onClick={() => deletePost(post.id)}></button>
               <h3>{post.title}</h3>
               <p>{post.description}</p>
               <span>Створено: {post.createAdd}</span>
@@ -80,7 +101,10 @@ function App() {
             name="description"
           ></textarea>
         </div>
-        <button className="add-post" onClick={addPost}>Додати новий пост</button>
+        <button className="add-post" onClick={addPost}>
+          Додати новий пост
+        </button>
+        {/* <button className="clear-post" onClick={onClear}>Очистити</button>  */}
       </div>
     </div>
   );
