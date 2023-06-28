@@ -1,5 +1,5 @@
-import { useState } from "react";
-import postsData from "./postsData";
+import { useEffect, useState } from "react";
+// import postsData from "./postsData";
 import getDate from "./getData";
 
 function App() {
@@ -7,6 +7,10 @@ function App() {
   //винесли в окремий компонент фун-ю, яка генерує дату.
   //якщо не використовувати import postsData from "./postsData" - так, ніби ми ще не створювали пости,то потрібно в useState([])- передати пустий масив
   const [posts, setPosts] = useState([]);
+  useEffect(() => {
+    const p = localStorage.getItem("posts"); //тут ми змінній const р прописали значення яке ми отримуємо в localStorage
+    setPosts(JSON.parse(p)); //і setPosts це значення передали в форматі JS. викликали в useEffect, щоб відобразилися пости при завантаженні сторінки
+  }, []);
 
   //витягуємо інф-ю з інпутів
   const [postInfo, setPostInfo] = useState({
@@ -16,11 +20,13 @@ function App() {
 
   //видалення поста
   const deletePost = (id) => {
-    let newPosts = posts.filter(post => post.id!==id)
-    setPosts(newPosts)
-  }
+    let deletePosts = posts.filter((post) => post.id !== id);
+    setPosts(deletePosts);
+    localStorage.setItem("posts", JSON.stringify(deletePosts)); //в  localStorage добавили ключ "posts" і його значення JSON.stringify(newPosts)
+    //якщо відразу в localStorage подивитися на posts, то побачимо пустий масив, бо не встигає обновляти дані
+  };
 
-//управляємо формою вводу
+  //управляємо формою вводу
   const onChangeSetPostInfo = (event) => {
     setPostInfo((prevPost) => {
       return {
@@ -35,9 +41,8 @@ function App() {
     setPostInfo({
       title: "",
       description: "",
-    })
+    });
   };
-
 
   const addPost = () => {
     //перевірка інпутів на вміст
@@ -45,21 +50,29 @@ function App() {
       alert("Введіть текст");
       return;
     }
+    let newAddPosts = [ //створюємо нову змінну з масивом на основі старого,який був створений в setPosts нижче. Тобто, той масив що повертали в setPosts просто виносимо в окрему змінну
+      ...posts, //деструктуризуємо старий пост
+      {              //і додаємо новий об'єкт. а в setPosts передаємо вже нову змінну(newAddPosts) і в localStorage теж передаємо цю нову фун-ю: localStorage.setItem("posts", JSON.stringify(newAddPosts));
+        id: posts.length + 1,
+        title: postInfo.title,
+        description: postInfo.description,
+        createAdd: getDate(),
+      },
+    ];
     //зміна стейту, щоб змінився UI
-    setPosts((prevPost) => {
-      return [
-        //спредимо старі пости
-        ...prevPost,
-        //додаємо новий пост
-        {
-          id: posts.length + 1,
-          title: postInfo.title,
-          description: postInfo.description,
-          createAdd: getDate(),
-          // index: posts.index,
-        },
-      ];
-    });
+    setPosts(newAddPosts); //вже нова змінна в setPosts з масивом зі старим значенням і новим об'єктом
+    // return [
+    //   //спредимо старі пости
+    //   ...prevPost,
+    //   //додаємо новий пост
+    //   {
+    //     id: posts.length + 1,
+    //     title: postInfo.title,
+    //     description: postInfo.description,
+    //     createAdd: getDate(),
+    //   },
+    // ]; //звідси ми все забираємо і вище створюємо нову змінну let newPosts, в неї спредимо старе значення + новий об'єкт
+    localStorage.setItem("posts", JSON.stringify(newAddPosts));// для   localStorage також передаємо цю нову змінну. І ці зміни не тільки відобразяться на екрані, а пост відразу попаде ще й в localStorage і коли ми оновимо сторінку, то всерівно все збережеться.
     onClear();
   };
 
@@ -70,7 +83,10 @@ function App() {
         {posts.map((post) => {
           return (
             <div key={post.id} className="post-item">
-              <button className="delete-btn" onClick={() => deletePost(post.id)}></button>
+              <button
+                className="delete-btn"
+                onClick={() => deletePost(post.id)}
+              ></button>
               <h3>{post.title}</h3>
               <p>{post.description}</p>
               <span>Створено: {post.createAdd}</span>
