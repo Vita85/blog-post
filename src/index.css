@@ -16,7 +16,7 @@
 }
 .posts {
   width: 65%;
-  background-color: rgb(167, 245, 219);
+  background-color: rgb(167, 245, 180);
   padding: 15px;
   display: flex;
   flex-direction: column;

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-// import postsData from "./postsData";
+import postsData from "./postsData";
 import getDate from "./getData";
 
 function App() {
@@ -7,9 +7,14 @@ function App() {
   //винесли в окремий компонент фун-ю, яка генерує дату.
   //якщо не використовувати import postsData from "./postsData" - так, ніби ми ще не створювали пости,то потрібно в useState([])- передати пустий масив
   const [posts, setPosts] = useState([]);
+
   useEffect(() => {
     const p = localStorage.getItem("posts"); //тут ми змінній const р прописали значення яке ми отримуємо в localStorage
-    setPosts(JSON.parse(p)); //і setPosts це значення передали в форматі JS. викликали в useEffect, щоб відобразилися пости при завантаженні сторінки
+    const localPosts = JSON.parse(p);
+    if (localPosts) {
+      setPosts(JSON.parse(p));
+    }
+    //і setPosts це значення передали в форматі JS. викликали в useEffect, щоб відобразилися пости при завантаженні сторінки
   }, []);
 
   //витягуємо інф-ю з інпутів
@@ -50,9 +55,11 @@ function App() {
       alert("Введіть текст");
       return;
     }
-    let newAddPosts = [ //створюємо нову змінну з масивом на основі старого,який був створений в setPosts нижче. Тобто, той масив що повертали в setPosts просто виносимо в окрему змінну
+    let newAddPosts = [
+      //створюємо нову змінну з масивом на основі старого,який був створений в setPosts нижче. Тобто, той масив що повертали в setPosts просто виносимо в окрему змінну
       ...posts, //деструктуризуємо старий пост
-      {              //і додаємо новий об'єкт. а в setPosts передаємо вже нову змінну(newAddPosts) і в localStorage теж передаємо цю нову фун-ю: localStorage.setItem("posts", JSON.stringify(newAddPosts));
+      {
+        //і додаємо новий об'єкт. а в setPosts передаємо вже нову змінну(newAddPosts) і в localStorage теж передаємо цю нову фун-ю: localStorage.setItem("posts", JSON.stringify(newAddPosts));
         id: posts.length + 1,
         title: postInfo.title,
         description: postInfo.description,
@@ -72,10 +79,10 @@ function App() {
     //     createAdd: getDate(),
     //   },
     // ]; //звідси ми все забираємо і вище створюємо нову змінну let newPosts, в неї спредимо старе значення + новий об'єкт
-    localStorage.setItem("posts", JSON.stringify(newAddPosts));// для   localStorage також передаємо цю нову змінну. І ці зміни не тільки відобразяться на екрані, а пост відразу попаде ще й в localStorage і коли ми оновимо сторінку, то всерівно все збережеться.
+    localStorage.setItem("posts", JSON.stringify(newAddPosts)); // для   localStorage також передаємо цю нову змінну. І ці зміни не тільки відобразяться на екрані, а пост відразу попаде ще й в localStorage і коли ми оновимо сторінку, то всерівно все збережеться.
     onClear();
   };
-
+  console.log(posts);
   return (
     <div className="container">
       <div className="posts">
